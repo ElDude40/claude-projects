@@ -1,0 +1,455 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		000000000000000000000002 /* MedTranslateApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000001 /* MedTranslateApp.swift */; };
+		000000000000000000000004 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000003 /* ContentView.swift */; };
+		000000000000000000000006 /* Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000005 /* Language.swift */; };
+		000000000000000000000008 /* MedicalTerm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000007 /* MedicalTerm.swift */; };
+		00000000000000000000000A /* FavoriteTranslation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000009 /* FavoriteTranslation.swift */; };
+		00000000000000000000000C /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000000B /* AppSettings.swift */; };
+		00000000000000000000000E /* TranslationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000000D /* TranslationEngine.swift */; };
+		000000000000000000000010 /* SpeechRecognitionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000000F /* SpeechRecognitionService.swift */; };
+		000000000000000000000012 /* SpeechSynthesisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000011 /* SpeechSynthesisService.swift */; };
+		000000000000000000000014 /* MedicalTermsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000013 /* MedicalTermsRepository.swift */; };
+		000000000000000000000016 /* SentenceGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000015 /* SentenceGenerator.swift */; };
+		000000000000000000000018 /* MicButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000017 /* MicButton.swift */; };
+		00000000000000000000001A /* LanguagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000019 /* LanguagePickerView.swift */; };
+		00000000000000000000001C /* TranslateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000001B /* TranslateView.swift */; };
+		00000000000000000000001E /* MedicalTermsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000001D /* MedicalTermsListView.swift */; };
+		000000000000000000000020 /* MedicalTermDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000001F /* MedicalTermDetailView.swift */; };
+		000000000000000000000022 /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000021 /* FavoritesView.swift */; };
+		000000000000000000000024 /* FavoriteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000023 /* FavoriteDetailView.swift */; };
+		000000000000000000000026 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000025 /* SettingsView.swift */; };
+		000000000000000000000028 /* MedicalTerms.json in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000027 /* MedicalTerms.json */; };
+		00000000000000000000002A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000029 /* Assets.xcassets */; };
+		00000000000000000000002C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000002B /* Preview Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		00000000000000000000002D /* MedTranslate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MedTranslate.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		000000000000000000000001 /* MedTranslateApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedTranslateApp.swift; sourceTree = "<group>"; };
+		000000000000000000000003 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		000000000000000000000005 /* Language.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Language.swift; sourceTree = "<group>"; };
+		000000000000000000000007 /* MedicalTerm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedicalTerm.swift; sourceTree = "<group>"; };
+		000000000000000000000009 /* FavoriteTranslation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteTranslation.swift; sourceTree = "<group>"; };
+		00000000000000000000000B /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		00000000000000000000000D /* TranslationEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationEngine.swift; sourceTree = "<group>"; };
+		00000000000000000000000F /* SpeechRecognitionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognitionService.swift; sourceTree = "<group>"; };
+		000000000000000000000011 /* SpeechSynthesisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechSynthesisService.swift; sourceTree = "<group>"; };
+		000000000000000000000013 /* MedicalTermsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedicalTermsRepository.swift; sourceTree = "<group>"; };
+		000000000000000000000015 /* SentenceGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SentenceGenerator.swift; sourceTree = "<group>"; };
+		000000000000000000000017 /* MicButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicButton.swift; sourceTree = "<group>"; };
+		000000000000000000000019 /* LanguagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguagePickerView.swift; sourceTree = "<group>"; };
+		00000000000000000000001B /* TranslateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslateView.swift; sourceTree = "<group>"; };
+		00000000000000000000001D /* MedicalTermsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedicalTermsListView.swift; sourceTree = "<group>"; };
+		00000000000000000000001F /* MedicalTermDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedicalTermDetailView.swift; sourceTree = "<group>"; };
+		000000000000000000000021 /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
+		000000000000000000000023 /* FavoriteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteDetailView.swift; sourceTree = "<group>"; };
+		000000000000000000000025 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		000000000000000000000027 /* MedicalTerms.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = MedicalTerms.json; sourceTree = "<group>"; };
+		000000000000000000000029 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		00000000000000000000002B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		00000000000000000000003F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		000000000000000000000031 = {
+			isa = PBXGroup;
+			children = (
+				000000000000000000000005 /* Language.swift */,
+				000000000000000000000007 /* MedicalTerm.swift */,
+				000000000000000000000009 /* FavoriteTranslation.swift */,
+				00000000000000000000000B /* AppSettings.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		000000000000000000000032 = {
+			isa = PBXGroup;
+			children = (
+				00000000000000000000000D /* TranslationEngine.swift */,
+				00000000000000000000000F /* SpeechRecognitionService.swift */,
+				000000000000000000000011 /* SpeechSynthesisService.swift */,
+				000000000000000000000013 /* MedicalTermsRepository.swift */,
+				000000000000000000000015 /* SentenceGenerator.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		000000000000000000000033 = {
+			isa = PBXGroup;
+			children = (
+				000000000000000000000017 /* MicButton.swift */,
+				000000000000000000000019 /* LanguagePickerView.swift */,
+				00000000000000000000001B /* TranslateView.swift */,
+				00000000000000000000001D /* MedicalTermsListView.swift */,
+				00000000000000000000001F /* MedicalTermDetailView.swift */,
+				000000000000000000000021 /* FavoritesView.swift */,
+				000000000000000000000023 /* FavoriteDetailView.swift */,
+				000000000000000000000025 /* SettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		000000000000000000000034 = {
+			isa = PBXGroup;
+			children = (
+				000000000000000000000027 /* MedicalTerms.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		000000000000000000000035 = {
+			isa = PBXGroup;
+			children = (
+				00000000000000000000002B /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			name = "Preview Content";
+			sourceTree = "<group>";
+		};
+		000000000000000000000030 = {
+			isa = PBXGroup;
+			children = (
+				000000000000000000000001 /* MedTranslateApp.swift */,
+				000000000000000000000003 /* ContentView.swift */,
+				000000000000000000000031 /* Models */,
+				000000000000000000000032 /* Services */,
+				000000000000000000000033 /* Views */,
+				000000000000000000000034 /* Resources */,
+				000000000000000000000029 /* Assets.xcassets */,
+				000000000000000000000035 /* Preview Content */,
+			);
+			path = MedTranslate;
+			name = MedTranslate;
+			sourceTree = "<group>";
+		};
+		00000000000000000000002F = {
+			isa = PBXGroup;
+			children = (
+				00000000000000000000002D /* MedTranslate.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		00000000000000000000002E = {
+			isa = PBXGroup;
+			children = (
+				000000000000000000000030 /* MedTranslate */,
+				00000000000000000000002F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		000000000000000000000037 /* MedTranslate */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 00000000000000000000003D /* Build configuration list for PBXNativeTarget "MedTranslate" */;
+			buildPhases = (
+				00000000000000000000003E /* Sources */,
+				00000000000000000000003F /* Frameworks */,
+				000000000000000000000040 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MedTranslate;
+			productName = MedTranslate;
+			productReference = 00000000000000000000002D /* MedTranslate.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		000000000000000000000036 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1540;
+				LastUpgradeCheck = 1540;
+				TargetAttributes = {
+					000000000000000000000037 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+				};
+			};
+			buildConfigurationList = 00000000000000000000003A /* Build configuration list for PBXProject "MedTranslate" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 00000000000000000000002E;
+			productRefGroup = 00000000000000000000002F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				000000000000000000000037 /* MedTranslate */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		000000000000000000000040 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				00000000000000000000002A /* Assets.xcassets in Resources */,
+				00000000000000000000002C /* Preview Assets.xcassets in Resources */,
+				000000000000000000000028 /* MedicalTerms.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		00000000000000000000003E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				000000000000000000000002 /* MedTranslateApp.swift in Sources */,
+				000000000000000000000004 /* ContentView.swift in Sources */,
+				000000000000000000000006 /* Language.swift in Sources */,
+				000000000000000000000008 /* MedicalTerm.swift in Sources */,
+				00000000000000000000000A /* FavoriteTranslation.swift in Sources */,
+				00000000000000000000000C /* AppSettings.swift in Sources */,
+				00000000000000000000000E /* TranslationEngine.swift in Sources */,
+				000000000000000000000010 /* SpeechRecognitionService.swift in Sources */,
+				000000000000000000000012 /* SpeechSynthesisService.swift in Sources */,
+				000000000000000000000014 /* MedicalTermsRepository.swift in Sources */,
+				000000000000000000000016 /* SentenceGenerator.swift in Sources */,
+				000000000000000000000018 /* MicButton.swift in Sources */,
+				00000000000000000000001A /* LanguagePickerView.swift in Sources */,
+				00000000000000000000001C /* TranslateView.swift in Sources */,
+				00000000000000000000001E /* MedicalTermsListView.swift in Sources */,
+				000000000000000000000020 /* MedicalTermDetailView.swift in Sources */,
+				000000000000000000000022 /* FavoritesView.swift in Sources */,
+				000000000000000000000024 /* FavoriteDetailView.swift in Sources */,
+				000000000000000000000026 /* SettingsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		000000000000000000000038 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		000000000000000000000039 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		00000000000000000000003B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"MedTranslate/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "MedTranslate uses the microphone so you can dictate phrases to translate for your patient.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "MedTranslate uses speech recognition to turn your spoken phrases into text for translation.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.medtranslate.healthcare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		00000000000000000000003C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"MedTranslate/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "MedTranslate uses the microphone so you can dictate phrases to translate for your patient.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "MedTranslate uses speech recognition to turn your spoken phrases into text for translation.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.medtranslate.healthcare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		00000000000000000000003A /* Build configuration list for PBXProject "MedTranslate" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				000000000000000000000038 /* Debug */,
+				000000000000000000000039 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		00000000000000000000003D /* Build configuration list for PBXNativeTarget "MedTranslate" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				00000000000000000000003B /* Debug */,
+				00000000000000000000003C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 000000000000000000000036 /* Project object */;
+}

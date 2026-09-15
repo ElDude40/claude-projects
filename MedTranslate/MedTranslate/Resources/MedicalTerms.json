@@ -1,0 +1,352 @@
+[
+  {
+    "id": "symptom-fever",
+    "term": "Fever",
+    "category": "Symptom",
+    "definition": "A body temperature higher than normal, usually a sign that the body is fighting an infection.",
+    "exampleSentence": "Have you had a fever in the last 24 hours?"
+  },
+  {
+    "id": "symptom-nausea",
+    "term": "Nausea",
+    "category": "Symptom",
+    "definition": "An uneasy feeling in the stomach that often comes before vomiting.",
+    "exampleSentence": "Are you feeling any nausea after eating?"
+  },
+  {
+    "id": "symptom-dizziness",
+    "term": "Dizziness",
+    "category": "Symptom",
+    "definition": "A feeling of being unsteady, light-headed, or like the room is spinning.",
+    "exampleSentence": "Do you feel dizziness when you stand up quickly?"
+  },
+  {
+    "id": "symptom-shortness-of-breath",
+    "term": "Shortness of Breath",
+    "category": "Symptom",
+    "definition": "Difficulty breathing normally, or a feeling that you can't get enough air.",
+    "exampleSentence": "Tell me if you feel shortness of breath while walking."
+  },
+  {
+    "id": "symptom-chest-pain",
+    "term": "Chest Pain",
+    "category": "Symptom",
+    "definition": "Any pain, pressure, or tightness felt in the chest area.",
+    "exampleSentence": "Can you point to where the chest pain is located?"
+  },
+  {
+    "id": "symptom-fatigue",
+    "term": "Fatigue",
+    "category": "Symptom",
+    "definition": "A deep tiredness or lack of energy that doesn't improve with rest.",
+    "exampleSentence": "How long have you been experiencing this fatigue?"
+  },
+  {
+    "id": "symptom-chills",
+    "term": "Chills",
+    "category": "Symptom",
+    "definition": "A feeling of coldness with shivering, often happening along with a fever.",
+    "exampleSentence": "Did you have chills before the fever started?"
+  },
+  {
+    "id": "symptom-swelling",
+    "term": "Swelling",
+    "category": "Symptom",
+    "definition": "A part of the body becoming larger than usual, often due to fluid or inflammation.",
+    "exampleSentence": "I noticed some swelling in your ankle."
+  },
+  {
+    "id": "symptom-rash",
+    "term": "Rash",
+    "category": "Symptom",
+    "definition": "A change in the skin's color or texture, such as redness, bumps, or itching.",
+    "exampleSentence": "When did you first notice the rash on your arm?"
+  },
+  {
+    "id": "condition-diabetes",
+    "term": "Diabetes",
+    "category": "Condition",
+    "definition": "A condition where the body has trouble controlling the amount of sugar in the blood.",
+    "exampleSentence": "Your blood test shows signs of diabetes, so we'll check your blood sugar regularly."
+  },
+  {
+    "id": "condition-hypertension",
+    "term": "Hypertension",
+    "category": "Condition",
+    "definition": "High blood pressure — the force of blood against your artery walls is higher than it should be.",
+    "exampleSentence": "Your hypertension means we need to monitor your blood pressure at home."
+  },
+  {
+    "id": "condition-asthma",
+    "term": "Asthma",
+    "category": "Condition",
+    "definition": "A condition that narrows and inflames the airways, making it harder to breathe.",
+    "exampleSentence": "Your asthma may be triggered by cold air or exercise."
+  },
+  {
+    "id": "condition-anemia",
+    "term": "Anemia",
+    "category": "Condition",
+    "definition": "A condition where the blood doesn't have enough healthy red blood cells to carry oxygen well.",
+    "exampleSentence": "Your anemia is why you've been feeling so tired."
+  },
+  {
+    "id": "condition-pneumonia",
+    "term": "Pneumonia",
+    "category": "Condition",
+    "definition": "An infection that inflames the air sacs in one or both lungs, which may fill with fluid.",
+    "exampleSentence": "The X-ray confirms you have pneumonia in your right lung."
+  },
+  {
+    "id": "condition-migraine",
+    "term": "Migraine",
+    "category": "Condition",
+    "definition": "A strong headache, often on one side of the head, sometimes with nausea or sensitivity to light.",
+    "exampleSentence": "How often do you get these migraines each month?"
+  },
+  {
+    "id": "condition-arthritis",
+    "term": "Arthritis",
+    "category": "Condition",
+    "definition": "Swelling and tenderness of one or more joints, causing pain and stiffness.",
+    "exampleSentence": "Your arthritis is likely why your knees feel stiff in the morning."
+  },
+  {
+    "id": "condition-depression",
+    "term": "Depression",
+    "category": "Condition",
+    "definition": "A medical condition causing persistent sadness and loss of interest that affects daily life.",
+    "exampleSentence": "It's common to experience depression after an illness like this — we can help."
+  },
+  {
+    "id": "condition-stroke",
+    "term": "Stroke",
+    "category": "Condition",
+    "definition": "A sudden interruption of blood flow to the brain, which can damage brain tissue quickly.",
+    "exampleSentence": "We need to act fast because these symptoms could mean a stroke."
+  },
+  {
+    "id": "bodypart-abdomen",
+    "term": "Abdomen",
+    "category": "Body Part",
+    "definition": "The area of the body between the chest and the hips, containing the stomach and intestines.",
+    "exampleSentence": "I'm going to press gently on your abdomen — tell me if it hurts."
+  },
+  {
+    "id": "bodypart-chest",
+    "term": "Chest",
+    "category": "Body Part",
+    "definition": "The front part of the body between the neck and the abdomen, containing the heart and lungs.",
+    "exampleSentence": "Please take a deep breath while I listen to your chest."
+  },
+  {
+    "id": "bodypart-throat",
+    "term": "Throat",
+    "category": "Body Part",
+    "definition": "The passage at the back of the mouth leading to the esophagus and windpipe.",
+    "exampleSentence": "Open wide so I can take a look at your throat."
+  },
+  {
+    "id": "bodypart-lower-back",
+    "term": "Lower Back",
+    "category": "Body Part",
+    "definition": "The area of the spine below the ribs and above the hips.",
+    "exampleSentence": "Point to where in your lower back the pain is worst."
+  },
+  {
+    "id": "bodypart-wrist",
+    "term": "Wrist",
+    "category": "Body Part",
+    "definition": "The joint connecting the hand to the forearm.",
+    "exampleSentence": "Can you rotate your wrist for me slowly?"
+  },
+  {
+    "id": "bodypart-ankle",
+    "term": "Ankle",
+    "category": "Body Part",
+    "definition": "The joint connecting the foot to the leg.",
+    "exampleSentence": "I need to check if your ankle can bear weight."
+  },
+  {
+    "id": "bodypart-sinuses",
+    "term": "Sinuses",
+    "category": "Body Part",
+    "definition": "Air-filled spaces behind the forehead, cheeks, and nose that can become blocked or inflamed.",
+    "exampleSentence": "Your sinuses look inflamed, which is causing the pressure in your face."
+  },
+  {
+    "id": "bodypart-spine",
+    "term": "Spine",
+    "category": "Body Part",
+    "definition": "The column of bones running down the back that protects the spinal cord.",
+    "exampleSentence": "The scan will show us the alignment of your spine."
+  },
+  {
+    "id": "procedure-xray",
+    "term": "X-ray",
+    "category": "Procedure",
+    "definition": "A quick imaging test that uses a small amount of radiation to take pictures of bones and organs.",
+    "exampleSentence": "We're going to take an X-ray of your chest to check your lungs."
+  },
+  {
+    "id": "procedure-blood-draw",
+    "term": "Blood Draw",
+    "category": "Procedure",
+    "definition": "Taking a small sample of blood from a vein, usually in the arm, to test in a lab.",
+    "exampleSentence": "You'll feel a quick pinch during the blood draw."
+  },
+  {
+    "id": "procedure-biopsy",
+    "term": "Biopsy",
+    "category": "Procedure",
+    "definition": "Removing a small piece of tissue to examine it closely under a microscope.",
+    "exampleSentence": "The biopsy will tell us exactly what kind of tissue this is."
+  },
+  {
+    "id": "procedure-mri",
+    "term": "MRI Scan",
+    "category": "Procedure",
+    "definition": "A detailed imaging test that uses magnets and radio waves instead of radiation.",
+    "exampleSentence": "The MRI scan will take about 30 minutes, and you'll need to stay still."
+  },
+  {
+    "id": "procedure-ultrasound",
+    "term": "Ultrasound",
+    "category": "Procedure",
+    "definition": "An imaging test that uses sound waves to create pictures of organs or tissues.",
+    "exampleSentence": "We'll use an ultrasound to get a better look at your abdomen."
+  },
+  {
+    "id": "procedure-ekg",
+    "term": "Electrocardiogram (EKG)",
+    "category": "Procedure",
+    "definition": "A quick, painless test that records the electrical activity of the heart.",
+    "exampleSentence": "We're going to place some small sensors on your chest for the EKG."
+  },
+  {
+    "id": "procedure-catheter",
+    "term": "Catheter Insertion",
+    "category": "Procedure",
+    "definition": "Placing a thin, flexible tube into the body, often to drain urine or deliver medication.",
+    "exampleSentence": "You may feel some pressure during the catheter insertion, but it shouldn't hurt."
+  },
+  {
+    "id": "procedure-vaccination",
+    "term": "Vaccination",
+    "category": "Procedure",
+    "definition": "An injection that helps the body build protection against a specific disease.",
+    "exampleSentence": "It's time for your annual flu vaccination."
+  },
+  {
+    "id": "medication-antibiotic",
+    "term": "Antibiotic",
+    "category": "Medication",
+    "definition": "A medicine that treats infections caused by bacteria.",
+    "exampleSentence": "This antibiotic will help clear up the infection in a few days."
+  },
+  {
+    "id": "medication-painkiller",
+    "term": "Painkiller",
+    "category": "Medication",
+    "definition": "A medicine used to reduce or relieve pain.",
+    "exampleSentence": "Take this painkiller every six hours if the pain returns."
+  },
+  {
+    "id": "medication-antihistamine",
+    "term": "Antihistamine",
+    "category": "Medication",
+    "definition": "A medicine that reduces allergy symptoms like itching, sneezing, or a runny nose.",
+    "exampleSentence": "An antihistamine should help with your allergy symptoms."
+  },
+  {
+    "id": "medication-insulin",
+    "term": "Insulin",
+    "category": "Medication",
+    "definition": "A medicine that helps the body control blood sugar levels, often used to treat diabetes.",
+    "exampleSentence": "I'll show you how to give yourself the insulin injection."
+  },
+  {
+    "id": "medication-inhaler",
+    "term": "Inhaler",
+    "category": "Medication",
+    "definition": "A small device that delivers medicine directly into the lungs to help with breathing.",
+    "exampleSentence": "Use your inhaler if you start to feel short of breath."
+  },
+  {
+    "id": "medication-anticoagulant",
+    "term": "Anticoagulant (Blood Thinner)",
+    "category": "Medication",
+    "definition": "A medicine that helps prevent harmful blood clots from forming.",
+    "exampleSentence": "This anticoagulant will help prevent blood clots, so watch for unusual bruising."
+  },
+  {
+    "id": "medication-antidepressant",
+    "term": "Antidepressant",
+    "category": "Medication",
+    "definition": "A medicine that helps manage symptoms of depression or anxiety.",
+    "exampleSentence": "It may take a few weeks for the antidepressant to start working."
+  },
+  {
+    "id": "medication-sedative",
+    "term": "Sedative",
+    "category": "Medication",
+    "definition": "A medicine that helps you feel calm or fall asleep, often used before a procedure.",
+    "exampleSentence": "We'll give you a mild sedative before the procedure to help you relax."
+  },
+  {
+    "id": "instruction-npo",
+    "term": "Take on an Empty Stomach (NPO)",
+    "category": "Instruction",
+    "definition": "Do not eat or drink anything for a set period of time, usually before a test or procedure.",
+    "exampleSentence": "Please don't eat or drink anything after midnight before your procedure."
+  },
+  {
+    "id": "instruction-rest-elevate",
+    "term": "Rest and Elevate",
+    "category": "Instruction",
+    "definition": "Keep the injured area still and raised above heart level to reduce swelling.",
+    "exampleSentence": "Rest and elevate your ankle whenever you're sitting down."
+  },
+  {
+    "id": "instruction-apply-ice",
+    "term": "Apply Ice",
+    "category": "Instruction",
+    "definition": "Put a cold pack or ice wrapped in cloth on an area to reduce swelling and pain.",
+    "exampleSentence": "Apply ice to the area for 20 minutes, a few times a day."
+  },
+  {
+    "id": "instruction-complete-course",
+    "term": "Complete the Full Course",
+    "category": "Instruction",
+    "definition": "Finish all of the prescribed medicine, even after you start feeling better.",
+    "exampleSentence": "It's important to complete the full course of antibiotics, even if you feel fine."
+  },
+  {
+    "id": "instruction-avoid-alcohol",
+    "term": "Avoid Alcohol",
+    "category": "Instruction",
+    "definition": "Do not drink alcohol, usually because it may interact with a medicine or condition.",
+    "exampleSentence": "Please avoid alcohol while you're taking this medication."
+  },
+  {
+    "id": "instruction-follow-up",
+    "term": "Follow Up in Two Weeks",
+    "category": "Instruction",
+    "definition": "Come back for another appointment about two weeks from now to check your progress.",
+    "exampleSentence": "Please schedule a follow-up in two weeks so we can check your progress."
+  },
+  {
+    "id": "instruction-stay-hydrated",
+    "term": "Stay Hydrated",
+    "category": "Instruction",
+    "definition": "Drink enough water throughout the day to support your body's recovery.",
+    "exampleSentence": "Make sure to stay hydrated, especially while you're recovering."
+  },
+  {
+    "id": "instruction-no-driving",
+    "term": "Do Not Drive After Taking This",
+    "category": "Instruction",
+    "definition": "This medicine can make you drowsy, so it isn't safe to drive after taking it.",
+    "exampleSentence": "Do not drive after taking this medication — arrange a ride home."
+  }
+]
