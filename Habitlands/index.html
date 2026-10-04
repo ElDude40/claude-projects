@@ -1,0 +1,785 @@
+<title>Habitlands</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&family=VT323&display=swap">
+<style>
+/* Layout: a 16-bit RPG menu screen. Stacked "windows" in two columns, one column on phones. Single dark theme by design. */
+:root {
+  color-scheme: dark;
+  --night: #0a0f22;
+  --win-top: #22327a;
+  --win-bot: #101a4a;
+  --frame: #e6eaff;
+  --ink: #f3f5ff;
+  --muted: #a7b4e6;
+  --dim: #6f7db5;
+  --gold: #ffd35c;
+  --danger: #ff8b8b;
+  --well: rgba(4, 8, 28, .55);
+  --font-display: "Pixelify Sans", "Courier New", monospace;
+  --font-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-data: "VT323", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--night); color: var(--ink); }
+body {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  background:
+    radial-gradient(1200px 500px at 50% -200px, #1b2a6e 0%, transparent 70%),
+    var(--night);
+  min-height: 100%;
+}
+.wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; padding-block: 20px 96px; }
+
+/* ---------- top bar ---------- */
+.topbar { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.logo { font-family: var(--font-display); font-weight: 700; font-size: 28px; letter-spacing: .04em; color: var(--gold); text-shadow: 3px 3px 0 #6b3d00; margin: 0; }
+.status { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+.status .dot { width: 8px; height: 8px; background: var(--dim); display: inline-block; }
+.status[data-mode="cloud"] .dot { background: #63e6be; }
+.status[data-mode="local"] .dot { background: var(--gold); }
+.status[data-mode="error"] .dot { background: var(--danger); }
+
+/* ---------- windows ---------- */
+.win {
+  background: linear-gradient(180deg, var(--win-top), var(--win-bot));
+  border: 3px solid var(--frame);
+  border-radius: 8px;
+  box-shadow: 0 0 0 3px var(--night), 0 6px 0 3px rgba(0,0,0,.35), inset 0 0 0 2px rgba(0,0,0,.3);
+  padding: 16px 18px 18px;
+  min-width: 0;
+}
+.win h2 {
+  font-family: var(--font-display); font-weight: 700; font-size: 15px;
+  text-transform: uppercase; letter-spacing: .14em; color: var(--gold);
+  margin: 0 0 12px; display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+}
+.win h2 small { font-family: var(--font-body); font-size: 12px; letter-spacing: .02em; text-transform: none; color: var(--muted); font-weight: 400; }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+.col { display: grid; gap: 22px; min-width: 0; }
+.full { grid-column: 1 / -1; }
+@media (max-width: 820px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- hero ---------- */
+.hero { display: flex; gap: 18px; align-items: center; }
+.sprite-box { flex: none; width: 104px; height: 112px; background: var(--well); border: 2px solid rgba(230,234,255,.35); border-radius: 4px; display: grid; place-items: center; }
+#sprite { image-rendering: pixelated; width: 72px; height: 78px; animation: bob 1.6s steps(2) infinite; }
+@keyframes bob { 50% { transform: translateY(-3px); } }
+.hero-info { flex: 1; min-width: 0; display: grid; gap: 6px; }
+#heroName {
+  font-family: var(--font-display); font-weight: 700; font-size: 26px; color: var(--ink);
+  background: transparent; border: 2px solid transparent; border-radius: 4px; padding: 0 6px; margin-left: -8px;
+  width: 100%; min-width: 0;
+}
+#heroName:hover { border-color: rgba(230,234,255,.25); }
+#heroName:focus { outline: none; border-color: var(--gold); background: var(--well); }
+.hero-class { font-size: 15px; color: var(--muted); }
+.hero-class b { color: var(--ink); }
+.lv { font-family: var(--font-data); font-size: 22px; color: var(--gold); line-height: 1; }
+.facts { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+.facts b { font-family: var(--font-data); font-size: 19px; color: var(--ink); font-weight: 400; }
+
+/* ---------- bars ---------- */
+.bar { height: 12px; background: var(--well); border: 2px solid rgba(230,234,255,.4); border-radius: 2px; position: relative; overflow: hidden; }
+.bar > i { position: absolute; inset: 0 auto 0 0; background: var(--c, var(--gold)); transition: width .5s steps(8); }
+.bar::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0 9px, rgba(0,0,0,.35) 9px 10px); }
+.xpline { display: flex; justify-content: space-between; font-family: var(--font-data); font-size: 17px; color: var(--muted); line-height: 1; margin-top: 3px; }
+
+/* ---------- stats ---------- */
+.stats { display: grid; gap: 12px; }
+.stat { display: grid; grid-template-columns: 52px minmax(0, 1fr) 64px; gap: 12px; align-items: center; }
+.stat .abbr { font-family: var(--font-display); font-weight: 700; font-size: 18px; color: var(--c); letter-spacing: .05em; }
+.stat .nm { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; color: var(--muted); margin-bottom: 3px; }
+.stat .nm span:first-child { color: var(--ink); font-weight: 700; }
+.stat .slv { text-align: right; font-family: var(--font-data); font-size: 26px; line-height: 1; }
+.stat .slv small { font-size: 15px; color: var(--muted); }
+
+/* ---------- forms ---------- */
+label { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 4px; }
+input, select, textarea {
+  font: inherit; color: var(--ink); background: var(--well);
+  border: 2px solid rgba(230,234,255,.35); border-radius: 4px; padding: 8px 10px; width: 100%; min-width: 0;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--gold); }
+select option, select optgroup { background: #101a4a; color: var(--ink); }
+.form { display: grid; gap: 12px; }
+.row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.amount { display: flex; align-items: center; gap: 8px; }
+.amount input { flex: 1; }
+.amount span { color: var(--muted); font-size: 14px; white-space: nowrap; }
+.preview { background: var(--well); border-radius: 4px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.preview .gain { font-family: var(--font-data); font-size: 28px; line-height: 1; }
+.preview .bonus { font-size: 13px; color: var(--muted); }
+.err { color: var(--danger); font-size: 13px; min-height: 0; }
+
+.btn {
+  font-family: var(--font-display); font-weight: 700; font-size: 16px; letter-spacing: .06em;
+  color: var(--night); background: var(--gold); border: 3px solid var(--frame); border-radius: 6px;
+  padding: 9px 18px 9px 26px; cursor: pointer; position: relative; box-shadow: 0 4px 0 #8a5a00;
+}
+.btn::before { content: "▶"; position: absolute; left: 8px; top: 50%; transform: translateY(-50%); font-size: 11px; opacity: 0; }
+.btn:hover::before, .btn:focus-visible::before { opacity: 1; }
+.btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #8a5a00; }
+.btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.btn.ghost { background: transparent; color: var(--ink); border-color: rgba(230,234,255,.45); box-shadow: none; font-size: 14px; padding: 6px 14px 6px 22px; }
+.btn.ghost::before { left: 6px; }
+.btn.warn { color: var(--danger); border-color: var(--danger); }
+.x { background: none; border: 0; color: var(--dim); cursor: pointer; font-size: 18px; line-height: 1; padding: 4px 6px; border-radius: 4px; font-family: var(--font-display); }
+.x:hover, .x:focus-visible { color: var(--danger); outline: none; background: var(--well); }
+.x.confirm { color: var(--danger); font-size: 13px; }
+
+/* ---------- quests ---------- */
+.quests { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.quest { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 10px; align-items: start; }
+.quest .box { width: 18px; height: 18px; border: 2px solid var(--frame); margin-top: 2px; display: grid; place-items: center; font-size: 12px; color: var(--night); }
+.quest.done .box { background: var(--gold); }
+.quest.done .qt { text-decoration: line-through; color: var(--muted); }
+.quest .qt { font-weight: 700; }
+.quest .qd { font-size: 13px; color: var(--muted); }
+.quest .rw { font-family: var(--font-data); font-size: 19px; color: var(--gold); line-height: 1.2; }
+
+/* ---------- chronicle ---------- */
+.chron { display: grid; gap: 14px; max-height: 460px; overflow-y: auto; padding-right: 4px; }
+.day h3 { font-family: var(--font-display); font-size: 13px; color: var(--muted); letter-spacing: .08em; margin: 0 0 6px; text-transform: uppercase; font-weight: 500; }
+.entry { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 10px; align-items: start; padding: 6px 0; border-top: 1px dashed rgba(230,234,255,.15); }
+.entry:first-of-type { border-top: 0; }
+.entry .eg { font-family: var(--font-data); font-size: 20px; line-height: 1.1; color: var(--c); }
+.entry .en { font-weight: 700; overflow-wrap: anywhere; }
+.entry .em { font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+.empty { color: var(--muted); font-size: 14px; padding: 8px 0; }
+
+/* ---------- activity ---------- */
+.chart { display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); gap: 5px; align-items: end; height: 130px; }
+.col-bar { display: flex; flex-direction: column-reverse; height: 100%; justify-content: flex-start; background: var(--well); border-radius: 2px; overflow: hidden; }
+.col-bar i { display: block; width: 100%; }
+.chart-x { display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); gap: 5px; margin-top: 4px; font-family: var(--font-data); font-size: 15px; color: var(--dim); text-align: center; line-height: 1; }
+.chart-x .today { color: var(--gold); }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 10px; font-size: 12px; color: var(--muted); }
+.legend span::before { content: ""; display: inline-block; width: 9px; height: 9px; background: var(--c); margin-right: 5px; }
+
+/* ---------- habits ---------- */
+.habits { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 8px 16px; margin-bottom: 16px; }
+.habit { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 6px 8px; background: var(--well); border-radius: 4px; }
+.chip { font-family: var(--font-display); font-weight: 700; font-size: 12px; color: var(--c); border: 2px solid var(--c); border-radius: 3px; text-align: center; padding: 1px 0; }
+.habit .hn { font-weight: 700; overflow-wrap: anywhere; line-height: 1.25; }
+.habit .hr { font-size: 12px; color: var(--muted); }
+.addform { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1.3fr) minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr) auto; gap: 10px; align-items: end; }
+@media (max-width: 820px) { .addform { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .addform .wide { grid-column: 1 / -1; } }
+.foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 24px; color: var(--dim); font-size: 13px; }
+.confirm-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; color: var(--danger); }
+
+/* ---------- create / loading ---------- */
+.center { max-width: 620px; margin: 40px auto 0; }
+.create-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px 16px; margin: 16px 0 20px; padding: 0; list-style: none; }
+.create-stats li { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 8px; align-items: start; font-size: 14px; color: var(--muted); }
+.create-stats b { color: var(--ink); }
+.lead { font-size: 16px; max-width: 60ch; margin: 0 0 4px; }
+.blink { animation: blink 1s steps(2) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ---------- toasts ---------- */
+.toasts { position: fixed; left: 0; right: 0; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); display: grid; justify-items: center; gap: 8px; pointer-events: none; padding-inline: 16px; z-index: 10; }
+.toast {
+  background: linear-gradient(180deg, var(--win-top), var(--win-bot)); border: 3px solid var(--frame); border-radius: 6px;
+  padding: 10px 16px; font-weight: 700; max-width: 100%; box-shadow: 0 0 0 3px var(--night);
+  animation: pop .25s steps(3);
+}
+.toast.lvl { border-color: var(--gold); color: var(--gold); font-family: var(--font-display); font-size: 18px; letter-spacing: .04em; }
+@keyframes pop { from { transform: translateY(12px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  #sprite, .blink, .toast { animation: none; }
+  .bar > i { transition: none; }
+}
+</style>
+
+<div class="wrap">
+  <header class="topbar">
+    <h1 class="logo">HABITLANDS</h1>
+    <div class="status" id="status" data-mode="loading"><span class="dot"></span><span id="statusText">Opening your save file…</span></div>
+  </header>
+
+  <section id="loading" class="win center">
+    <h2>Loading</h2>
+    <p>Reading your save file<span class="blink">_</span></p>
+  </section>
+
+  <section id="create" class="win center" hidden>
+    <h2>New game</h2>
+    <p class="lead">Every real habit you log becomes experience for your hero. Lift, and Strength rises. Run, and Stamina rises. Keep a streak going and each deed earns a little more.</p>
+    <ul class="create-stats" id="createStats"></ul>
+    <form id="createForm" class="form">
+      <div>
+        <label for="newName">Name your hero</label>
+        <input id="newName" maxlength="24" autocomplete="off" placeholder="e.g. Aria Stonefist" required>
+      </div>
+      <div><button class="btn" type="submit">Begin adventure</button></div>
+    </form>
+  </section>
+
+  <main id="game" hidden>
+    <div class="grid">
+      <div class="col">
+        <section class="win" aria-label="Hero">
+          <div class="hero">
+            <div class="sprite-box"><canvas id="sprite" width="12" height="13" aria-hidden="true"></canvas></div>
+            <div class="hero-info">
+              <input id="heroName" maxlength="24" aria-label="Hero name" autocomplete="off">
+              <div class="hero-class" id="heroClass"></div>
+              <div>
+                <div class="bar"><i id="heroBar" style="width:0"></i></div>
+                <div class="xpline"><span id="heroXp"></span><span id="heroNext"></span></div>
+              </div>
+              <div class="facts" id="heroFacts"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="win" aria-labelledby="logTitle">
+          <h2 id="logTitle">Log a deed <small>Your habits become XP</small></h2>
+          <form id="logForm" class="form">
+            <div>
+              <label for="habitSel">Habit</label>
+              <select id="habitSel"></select>
+            </div>
+            <div class="row">
+              <div>
+                <label for="amount">Amount</label>
+                <div class="amount"><input id="amount" type="number" min="0" step="any" inputmode="decimal"><span id="unit"></span></div>
+              </div>
+              <div>
+                <label for="when">Date</label>
+                <input id="when" type="date">
+              </div>
+            </div>
+            <div>
+              <label for="note">Note (optional)</label>
+              <input id="note" maxlength="140" autocomplete="off" placeholder="e.g. Squat 3×5 at 80 kg">
+            </div>
+            <div class="preview">
+              <div><div class="gain" id="pvGain">+0 XP</div><div class="bonus" id="pvBonus"></div></div>
+              <button class="btn" type="submit">Log it</button>
+            </div>
+            <div class="err" id="logErr" role="alert"></div>
+          </form>
+        </section>
+
+        <section class="win" aria-labelledby="questTitle">
+          <h2 id="questTitle">Today's quests <small id="questDate"></small></h2>
+          <ul class="quests" id="quests"></ul>
+        </section>
+      </div>
+
+      <div class="col">
+        <section class="win" aria-labelledby="statTitle">
+          <h2 id="statTitle">Attributes <small>Level · XP to next</small></h2>
+          <div class="stats" id="stats"></div>
+        </section>
+
+        <section class="win" aria-labelledby="actTitle">
+          <h2 id="actTitle">Last 14 days <small id="actTotal"></small></h2>
+          <div class="chart" id="chart"></div>
+          <div class="chart-x" id="chartX"></div>
+          <div class="legend" id="legend"></div>
+        </section>
+
+        <section class="win" aria-labelledby="chronTitle">
+          <h2 id="chronTitle">Chronicle <small>Recent deeds</small></h2>
+          <div class="chron" id="chron"></div>
+        </section>
+      </div>
+
+      <section class="win full" aria-labelledby="habTitle">
+        <h2 id="habTitle">Your habits <small>Add anything you're working on</small></h2>
+        <div class="habits" id="habits"></div>
+        <form id="addForm" class="addform">
+          <div class="wide"><label for="hName">New habit</label><input id="hName" maxlength="40" placeholder="e.g. Practice guitar" autocomplete="off"></div>
+          <div><label for="hStat">Raises</label><select id="hStat"></select></div>
+          <div><label for="hUnit">Measured in</label><input id="hUnit" maxlength="20" placeholder="min" autocomplete="off"></div>
+          <div><label for="hXp">XP per unit</label><input id="hXp" type="number" min="0.1" step="any" value="2"></div>
+          <div><label for="hDef">Usual amount</label><input id="hDef" type="number" min="0" step="any" value="30"></div>
+          <div><button class="btn" type="submit">Add</button></div>
+        </form>
+        <div class="err" id="addErr" role="alert"></div>
+      </section>
+    </div>
+
+    <footer class="foot">
+      <span>XP per deed = amount × XP per unit, plus 5% for each day of streak on that habit (up to +50%).</span>
+      <span id="resetArea"><button class="btn ghost warn" id="resetBtn" type="button">Start over</button></span>
+    </footer>
+  </main>
+</div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script>
+(() => {
+  const STATS = [
+    { k: 'STR', name: 'Strength',  color: '#ff7b7b', cls: 'Warrior', blurb: 'Lifting and resistance work' },
+    { k: 'STA', name: 'Stamina',   color: '#ffab55', cls: 'Ranger',  blurb: 'Cardio, running, steps' },
+    { k: 'DEX', name: 'Dexterity', color: '#74e087', cls: 'Rogue',   blurb: 'Mobility and practicing a craft' },
+    { k: 'INT', name: 'Intellect', color: '#5cb5ff', cls: 'Sage',    blurb: 'Reading, study, learning' },
+    { k: 'WIS', name: 'Wisdom',    color: '#bda6ff', cls: 'Monk',    blurb: 'Meditation and journaling' },
+    { k: 'VIT', name: 'Vitality',  color: '#5ef0c6', cls: 'Paladin', blurb: 'Sleep, water, good food' },
+    { k: 'CHA', name: 'Charisma',  color: '#ff8fbd', cls: 'Bard',    blurb: 'Friends, family, community' },
+  ];
+  const STAT = Object.fromEntries(STATS.map(s => [s.k, s]));
+  const DEFAULT_HABITS = [
+    { id: 'h-str',      name: 'Strength workout',     stat: 'STR', unit: 'min',          xp: 2,   def: 45 },
+    { id: 'h-cardio',   name: 'Cardio session',       stat: 'STA', unit: 'min',          xp: 2,   def: 30 },
+    { id: 'h-steps',    name: 'Steps',                stat: 'STA', unit: 'k steps',      xp: 5,   def: 8 },
+    { id: 'h-yoga',     name: 'Stretch or yoga',      stat: 'DEX', unit: 'min',          xp: 2,   def: 15 },
+    { id: 'h-practice', name: 'Practice a skill',     stat: 'DEX', unit: 'min',          xp: 1.5, def: 20 },
+    { id: 'h-read',     name: 'Read',                 stat: 'INT', unit: 'pages',        xp: 1,   def: 20 },
+    { id: 'h-study',    name: 'Study or course',      stat: 'INT', unit: 'min',          xp: 1.5, def: 30 },
+    { id: 'h-meditate', name: 'Meditate',             stat: 'WIS', unit: 'min',          xp: 3,   def: 10 },
+    { id: 'h-journal',  name: 'Journal',              stat: 'WIS', unit: 'entry',        xp: 25,  def: 1 },
+    { id: 'h-sleep',    name: 'Slept 7+ hours',       stat: 'VIT', unit: 'night',        xp: 30,  def: 1 },
+    { id: 'h-water',    name: 'Glass of water',       stat: 'VIT', unit: 'glasses',      xp: 4,   def: 1 },
+    { id: 'h-meal',     name: 'Healthy meal',         stat: 'VIT', unit: 'meals',        xp: 15,  def: 1 },
+    { id: 'h-connect',  name: 'Connect with someone', stat: 'CHA', unit: 'conversations', xp: 20, def: 1 },
+  ];
+  const LOG_CAP = 800;
+  const LS_KEY = 'habitlands-save-v1';
+
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const fmt = n => Math.round(n).toLocaleString();
+  const pad = n => String(n).padStart(2, '0');
+  const dayStr = dt => dt.getFullYear() + '-' + pad(dt.getMonth() + 1) + '-' + pad(dt.getDate());
+  const today = () => dayStr(new Date());
+  const addDays = (s, n) => { const [y, m, d] = s.split('-').map(Number); return dayStr(new Date(y, m - 1, d + n)); };
+  const parseDay = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  const hash = s => { let x = 2166136261; for (const c of s) { x ^= c.charCodeAt(0); x = Math.imul(x, 16777619); } return x >>> 0; };
+
+  let state = null;
+
+  function newState(name) {
+    return {
+      v: 1,
+      hero: { name, created: Date.now() },
+      stats: Object.fromEntries(STATS.map(s => [s.k, 0])),
+      bonus: 0,
+      habits: DEFAULT_HABITS.map(h => ({ ...h })),
+      log: [],
+      quests: {},
+    };
+  }
+  function normalize(d) {
+    if (!d || typeof d !== 'object' || !d.hero) return null;
+    const s = newState(String(d.hero.name || 'Hero'));
+    s.hero.created = d.hero.created || Date.now();
+    for (const k of Object.keys(s.stats)) s.stats[k] = Math.max(0, Number(d.stats && d.stats[k]) || 0);
+    s.bonus = Math.max(0, Number(d.bonus) || 0);
+    if (Array.isArray(d.habits)) s.habits = d.habits.filter(h => h && h.id && STAT[h.stat]).map(h => ({ ...h }));
+    if (Array.isArray(d.log)) s.log = d.log.filter(e => e && e.id && STAT[e.s]).map(e => ({ ...e }));
+    if (d.quests && typeof d.quests === 'object') s.quests = JSON.parse(JSON.stringify(d.quests));
+    return s;
+  }
+
+  /* ---------- levels ---------- */
+  function levelFrom(xp, base, step) {
+    let L = 1, need = base;
+    while (xp >= need) { xp -= need; L++; need = base + step * (L - 1); }
+    return { L, into: xp, need };
+  }
+  const statLevel = k => levelFrom(state.stats[k], 60, 40);
+  const heroXp = () => STATS.reduce((a, s) => a + state.stats[s.k], 0) + state.bonus;
+  const heroLevel = () => levelFrom(heroXp(), 200, 150);
+  const rank = L => L >= 30 ? 'Legendary' : L >= 20 ? 'Heroic' : L >= 10 ? 'Veteran' : L >= 5 ? 'Seasoned' : 'Fledgling';
+  function topStat() {
+    let best = null;
+    for (const s of STATS) if (state.stats[s.k] > 0 && (!best || state.stats[s.k] > state.stats[best.k])) best = s;
+    return best;
+  }
+  const levels = () => ({ hero: heroLevel().L, stats: Object.fromEntries(STATS.map(s => [s.k, statLevel(s.k).L])) });
+
+  /* ---------- streaks ---------- */
+  function daysWith(pred) { const set = new Set(); for (const e of state.log) if (pred(e)) set.add(e.d); return set; }
+  function streakBefore(hid, day) {
+    const days = daysWith(e => e.h === hid);
+    let n = 0, cur = addDays(day, -1);
+    while (days.has(cur)) { n++; cur = addDays(cur, -1); }
+    return n;
+  }
+  function currentStreak(days) {
+    let cur = today();
+    if (!days.has(cur)) cur = addDays(cur, -1);
+    let n = 0;
+    while (days.has(cur)) { n++; cur = addDays(cur, -1); }
+    return n;
+  }
+
+  /* ---------- quests ---------- */
+  function questsFor(day) {
+    const seed = hash(day), qs = [];
+    let avoid = null;
+    if (state.habits.length) {
+      const hb = state.habits[seed % state.habits.length];
+      avoid = hb.stat;
+      qs.push({ id: 'h:' + hb.id, title: hb.name, desc: 'Log this habit today', reward: 40, test: es => es.some(e => e.h === hb.id) });
+    }
+    const covered = new Set(state.habits.map(h => h.stat));
+    let pool = STATS.filter(s => s.k !== avoid && covered.has(s.k));
+    if (!pool.length) pool = STATS.filter(s => s.k !== avoid);
+    const st = pool[(seed >>> 8) % pool.length];
+    qs.push({ id: 's:' + st.k, title: 'Train ' + st.name, desc: 'Log any habit that raises ' + st.k, reward: 40, test: es => es.some(e => e.s === st.k) });
+    qs.push({ id: 'w', title: 'Well-rounded', desc: 'Log habits for 3 different attributes', reward: 75,
+      test: es => new Set(es.map(e => e.s)).size >= 3, progress: es => Math.min(3, new Set(es.map(e => e.s)).size) + '/3' });
+    return qs;
+  }
+  function checkQuests() {
+    const d = today();
+    const es = state.log.filter(e => e.d === d);
+    const done = state.quests[d] || (state.quests[d] = []);
+    for (const q of questsFor(d)) {
+      if (!done.includes(q.id) && q.test(es)) {
+        done.push(q.id);
+        state.bonus += q.reward;
+        toast('Quest complete: ' + q.title + '  +' + q.reward + ' XP', true);
+      }
+    }
+    const cutoff = addDays(d, -14);
+    for (const k of Object.keys(state.quests)) if (k < cutoff) delete state.quests[k];
+  }
+
+  /* ---------- toasts ---------- */
+  function toast(msg, lvl) {
+    const el = document.createElement('div');
+    el.className = 'toast' + (lvl ? ' lvl' : '');
+    el.textContent = msg;
+    $('toasts').appendChild(el);
+    setTimeout(() => el.remove(), lvl ? 4200 : 3000);
+  }
+  function announce(before) {
+    const after = levels();
+    for (const s of STATS) if (after.stats[s.k] > before.stats[s.k]) toast(s.name.toUpperCase() + ' rose to Lv ' + after.stats[s.k] + '!', true);
+    if (after.hero > before.hero) toast('LEVEL UP! You are now Lv ' + after.hero, true);
+  }
+
+  /* ---------- sprite ---------- */
+  const SPRITE = [
+    '....HHHH....',
+    '...HHHHHH...',
+    '..HHSSSSHH..',
+    '..HSESSESH..',
+    '...SSSSSS...',
+    '....SMMS....',
+    '..AAAAAAAA..',
+    '.SAAABBAAAS.',
+    '.SAAABBAAAS.',
+    '..AACCCCAA..',
+    '..LLL..LLL..',
+    '..LLL..LLL..',
+    '.KKKK..KKKK.',
+  ];
+  function lighten(hex, amt) {
+    const n = parseInt(hex.slice(1), 16);
+    const ch = sh => Math.round(((n >> sh) & 255) + (255 - ((n >> sh) & 255)) * amt);
+    return 'rgb(' + ch(16) + ',' + ch(8) + ',' + ch(0) + ')';
+  }
+  function drawSprite(color) {
+    const ctx = $('sprite').getContext('2d');
+    const pal = { H: '#6b4426', S: '#f1c79b', E: '#14142b', M: '#b35b4c', A: color, B: lighten(color, .55), C: '#3a2716', L: '#2b3770', K: '#4a3020' };
+    ctx.clearRect(0, 0, 12, 13);
+    SPRITE.forEach((row, y) => [...row].forEach((ch, x) => { if (pal[ch]) { ctx.fillStyle = pal[ch]; ctx.fillRect(x, y, 1, 1); } }));
+  }
+
+  /* ---------- render ---------- */
+  function renderHero() {
+    const top = topStat();
+    const hl = heroLevel();
+    if (document.activeElement !== $('heroName')) $('heroName').value = state.hero.name;
+    $('heroClass').innerHTML = '<span class="lv">Lv ' + hl.L + '</span> · ' + esc(rank(hl.L)) + ' <b>' + esc(top ? top.cls : 'Novice') + '</b>';
+    $('heroBar').style.width = (hl.into / hl.need * 100).toFixed(1) + '%';
+    $('heroXp').textContent = fmt(heroXp()) + ' XP total';
+    $('heroNext').textContent = fmt(hl.need - hl.into) + ' to Lv ' + (hl.L + 1);
+    const streak = currentStreak(daysWith(() => true));
+    const todayCount = state.log.filter(e => e.d === today()).length;
+    $('heroFacts').innerHTML =
+      '<span><b>' + streak + '</b> day streak</span>' +
+      '<span><b>' + todayCount + '</b> deeds today</span>' +
+      '<span><b>' + fmt(state.log.length) + '</b> logged</span>';
+    drawSprite(top ? top.color : '#8d9bd6');
+  }
+  function renderStats() {
+    $('stats').innerHTML = STATS.map(s => {
+      const l = statLevel(s.k);
+      return '<div class="stat" style="--c:' + s.color + '">' +
+        '<div class="abbr">' + s.k + '</div>' +
+        '<div><div class="nm"><span>' + s.name + '</span><span>' + fmt(l.into) + ' / ' + fmt(l.need) + '</span></div>' +
+        '<div class="bar"><i style="width:' + (l.into / l.need * 100).toFixed(1) + '%"></i></div></div>' +
+        '<div class="slv"><small>Lv</small> ' + l.L + '</div></div>';
+    }).join('');
+  }
+  function renderQuests() {
+    const d = today();
+    const es = state.log.filter(e => e.d === d);
+    const done = state.quests[d] || [];
+    $('questDate').textContent = parseDay(d).toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
+    $('quests').innerHTML = questsFor(d).map(q => {
+      const ok = done.includes(q.id);
+      return '<li class="quest' + (ok ? ' done' : '') + '"><span class="box">' + (ok ? '✓' : '') + '</span>' +
+        '<div><div class="qt">' + esc(q.title) + '</div><div class="qd">' + esc(q.desc) + (q.progress && !ok ? ' · ' + q.progress(es) : '') + '</div></div>' +
+        '<span class="rw">+' + q.reward + ' XP</span></li>';
+    }).join('');
+  }
+  function renderChronicle() {
+    if (!state.log.length) { $('chron').innerHTML = '<p class="empty">No deeds yet. Log your first habit and it will appear here.</p>'; return; }
+    const sorted = [...state.log].sort((a, b) => a.d === b.d ? b.t - a.t : (a.d < b.d ? 1 : -1)).slice(0, 40);
+    const groups = [];
+    for (const e of sorted) { const g = groups[groups.length - 1]; if (g && g.d === e.d) g.items.push(e); else groups.push({ d: e.d, items: [e] }); }
+    const t = today(), y = addDays(t, -1);
+    $('chron').innerHTML = groups.map(g => {
+      const label = g.d === t ? 'Today' : g.d === y ? 'Yesterday' : parseDay(g.d).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+      return '<div class="day"><h3>' + label + '</h3>' + g.items.map(e =>
+        '<div class="entry" style="--c:' + STAT[e.s].color + '"><div class="eg">+' + fmt(e.x) + ' ' + e.s + '</div>' +
+        '<div><div class="en">' + esc(e.n) + '</div><div class="em">' + esc(+e.a.toFixed(2) + ' ' + e.u) + (e.note ? ' · ' + esc(e.note) : '') + '</div></div>' +
+        '<button class="x" type="button" data-del="' + esc(e.id) + '" aria-label="Remove this entry">×</button></div>'
+      ).join('') + '</div>';
+    }).join('');
+  }
+  function renderActivity() {
+    const t = today();
+    const days = Array.from({ length: 14 }, (_, i) => addDays(t, i - 13));
+    const per = Object.fromEntries(days.map(d => [d, Object.fromEntries(STATS.map(s => [s.k, 0]))]));
+    for (const e of state.log) if (per[e.d]) per[e.d][e.s] += e.x;
+    const totals = days.map(d => STATS.reduce((a, s) => a + per[d][s.k], 0));
+    const max = Math.max(1, ...totals);
+    $('actTotal').textContent = fmt(totals.reduce((a, b) => a + b, 0)) + ' XP';
+    $('chart').innerHTML = days.map((d, i) =>
+      '<div class="col-bar" title="' + esc(parseDay(d).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ': ' + fmt(totals[i]) + ' XP') + '">' +
+      STATS.filter(s => per[d][s.k] > 0).map(s => '<i style="height:' + (per[d][s.k] / max * 100).toFixed(2) + '%;background:' + s.color + '"></i>').join('') +
+      '</div>').join('');
+    $('chartX').innerHTML = days.map(d => '<span' + (d === t ? ' class="today"' : '') + '>' + parseDay(d).getDate() + '</span>').join('');
+    $('legend').innerHTML = STATS.map(s => '<span style="--c:' + s.color + '">' + s.k + '</span>').join('');
+  }
+  function renderHabits() {
+    $('habits').innerHTML = state.habits.length ? state.habits.map(h =>
+      '<div class="habit" style="--c:' + STAT[h.stat].color + '"><span class="chip">' + h.stat + '</span>' +
+      '<div><div class="hn">' + esc(h.name) + '</div><div class="hr">' + esc(+h.xp + ' XP per ' + h.unit.replace(/s$/, '')) + '</div></div>' +
+      '<button class="x" type="button" data-rm="' + esc(h.id) + '" aria-label="Remove ' + esc(h.name) + '">×</button></div>'
+    ).join('') : '<p class="empty">No habits. Add one below.</p>';
+  }
+  function fillHabitSelect() {
+    const sel = $('habitSel');
+    const prev = sel.value;
+    sel.innerHTML = STATS.filter(s => state.habits.some(h => h.stat === s.k)).map(s =>
+      '<optgroup label="' + s.name + ' (' + s.k + ')">' +
+      state.habits.filter(h => h.stat === s.k).map(h => '<option value="' + esc(h.id) + '">' + esc(h.name) + '</option>').join('') +
+      '</optgroup>').join('');
+    if (state.habits.some(h => h.id === prev)) sel.value = prev;
+    else onHabitChange();
+  }
+  function onHabitChange() {
+    const h = state.habits.find(x => x.id === $('habitSel').value);
+    $('amount').value = h ? h.def : '';
+    $('unit').textContent = h ? h.unit : '';
+    updatePreview();
+  }
+  function updatePreview() {
+    const h = state.habits.find(x => x.id === $('habitSel').value);
+    const a = parseFloat($('amount').value);
+    if (!h) { $('pvGain').textContent = '+0 XP'; $('pvBonus').textContent = 'Add a habit to start logging'; return; }
+    const day = $('when').value || today();
+    const streak = streakBefore(h.id, day);
+    const bonus = Math.min(streak, 10) * 5;
+    const xp = a > 0 ? Math.max(1, Math.round(a * h.xp * (1 + bonus / 100))) : 0;
+    $('pvGain').innerHTML = '<span style="color:' + STAT[h.stat].color + '">+' + fmt(xp) + ' ' + h.stat + '</span> XP';
+    $('pvBonus').textContent = streak ? streak + '-day streak · +' + bonus + '% bonus' : 'Log again tomorrow to start a streak bonus';
+  }
+  function renderAll() {
+    renderHero(); renderStats(); renderQuests(); renderChronicle(); renderActivity(); renderHabits();
+  }
+
+  /* ---------- storage ---------- */
+  const store = { mode: 'loading', ref: null };
+  let saving = false, pending = false;
+  function setStatus(mode, text) { $('status').dataset.mode = mode; $('statusText').textContent = text; }
+  function localWrite() { try { localStorage.setItem(LS_KEY, JSON.stringify(state)); return true; } catch (e) { return false; } }
+  function localRead() { try { const s = localStorage.getItem(LS_KEY); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
+  function save() { pending = true; if (!saving) flush(); }
+  async function flush() {
+    saving = true;
+    while (pending) {
+      pending = false;
+      if (store.mode === 'cloud') {
+        setStatus('cloud', 'Saving…');
+        try {
+          await store.ref.set(JSON.parse(JSON.stringify(state)));
+          setStatus('cloud', 'Saved to your account');
+        } catch (e) {
+          if (e && (e.code === 'invalid_argument' || e.code === 'revoked' || e.code === 'not_granted')) {
+            store.mode = 'local';
+            localWrite();
+            setStatus('local', 'Saved on this device only');
+          } else {
+            setStatus('error', 'Could not save. Your next change will try again.');
+          }
+        }
+      } else {
+        const ok = localWrite();
+        setStatus(ok ? 'local' : 'error', ok ? 'Saved on this device only' : 'Saving is blocked in this browser');
+      }
+    }
+    saving = false;
+  }
+  async function boot() {
+    let data = null;
+    try {
+      if (window.claude && typeof window.claude.use === 'function') {
+        const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+        const id = user ? await user.id() : null;
+        if (db && id) {
+          store.ref = db.doc('data/users/' + id + '/save');
+          const snap = await store.ref.get();
+          data = snap.exists ? snap.data() : null;
+          store.mode = 'cloud';
+        }
+      }
+    } catch (e) { store.mode = 'local'; }
+    if (store.mode !== 'cloud') store.mode = 'local';
+    const local = localRead();
+    if (!data && local) data = local;
+    state = normalize(data);
+    setStatus(store.mode, store.mode === 'cloud' ? 'Saved to your account' : 'Saved on this device only');
+    $('loading').hidden = true;
+    if (state) startGame(); else { $('create').hidden = false; $('newName').focus(); }
+  }
+  function startGame() {
+    $('create').hidden = true;
+    $('game').hidden = false;
+    $('when').value = today();
+    $('when').max = today();
+    fillHabitSelect();
+    onHabitChange();
+    checkQuests();
+    renderAll();
+  }
+
+  /* ---------- actions ---------- */
+  $('createStats').innerHTML = STATS.map(s => '<li style="--c:' + s.color + '"><span class="chip">' + s.k + '</span><span><b>' + s.name + '</b><br>' + s.blurb + '</span></li>').join('');
+  $('hStat').innerHTML = STATS.map(s => '<option value="' + s.k + '">' + s.name + ' (' + s.k + ')</option>').join('');
+
+  $('createForm').addEventListener('submit', ev => {
+    ev.preventDefault();
+    const name = $('newName').value.trim();
+    if (!name) return;
+    state = newState(name);
+    save();
+    startGame();
+    toast('Welcome to Habitlands, ' + name + '!');
+  });
+
+  $('habitSel').addEventListener('change', onHabitChange);
+  $('amount').addEventListener('input', updatePreview);
+  $('when').addEventListener('change', updatePreview);
+
+  $('logForm').addEventListener('submit', ev => {
+    ev.preventDefault();
+    $('logErr').textContent = '';
+    const h = state.habits.find(x => x.id === $('habitSel').value);
+    const a = parseFloat($('amount').value);
+    if (!h) { $('logErr').textContent = 'Pick a habit first. Add one in "Your habits" below if the list is empty.'; return; }
+    if (!(a > 0) || a > 100000) { $('logErr').textContent = 'Enter an amount greater than 0.'; return; }
+    let day = $('when').value || today();
+    if (day > today()) day = today();
+    const before = levels();
+    const streak = streakBefore(h.id, day);
+    const xp = Math.max(1, Math.round(a * h.xp * (1 + Math.min(streak, 10) * 0.05)));
+    const note = $('note').value.trim();
+    state.log.push({ id: uid(), t: Date.now(), d: day, h: h.id, n: h.name, s: h.stat, a, u: h.unit, x: xp, note });
+    if (state.log.length > LOG_CAP) { state.log.sort((p, q) => p.t - q.t); state.log.splice(0, state.log.length - LOG_CAP); }
+    state.stats[h.stat] += xp;
+    toast('+' + fmt(xp) + ' ' + STAT[h.stat].name + ' XP');
+    checkQuests();
+    announce(before);
+    $('note').value = '';
+    save();
+    renderAll();
+    updatePreview();
+  });
+
+  $('heroName').addEventListener('change', () => {
+    const v = $('heroName').value.trim();
+    if (v && v !== state.hero.name) { state.hero.name = v; save(); }
+    $('heroName').value = state.hero.name;
+  });
+  $('heroName').addEventListener('keydown', ev => { if (ev.key === 'Enter') $('heroName').blur(); });
+
+  // Two-tap delete: first tap arms, second confirms.
+  function armOrRun(btn, run) {
+    if (btn.classList.contains('confirm')) { run(); return; }
+    btn.classList.add('confirm');
+    btn.textContent = 'Remove?';
+    setTimeout(() => { if (btn.isConnected) { btn.classList.remove('confirm'); btn.textContent = '×'; } }, 3000);
+  }
+  $('chron').addEventListener('click', ev => {
+    const btn = ev.target.closest('[data-del]');
+    if (!btn) return;
+    armOrRun(btn, () => {
+      const i = state.log.findIndex(e => e.id === btn.dataset.del);
+      if (i < 0) return;
+      const [e] = state.log.splice(i, 1);
+      state.stats[e.s] = Math.max(0, state.stats[e.s] - e.x);
+      save(); renderAll(); updatePreview();
+      toast('Entry removed (−' + fmt(e.x) + ' ' + e.s + ' XP)');
+    });
+  });
+  $('habits').addEventListener('click', ev => {
+    const btn = ev.target.closest('[data-rm]');
+    if (!btn) return;
+    armOrRun(btn, () => {
+      state.habits = state.habits.filter(h => h.id !== btn.dataset.rm);
+      save(); fillHabitSelect(); renderAll();
+    });
+  });
+  $('addForm').addEventListener('submit', ev => {
+    ev.preventDefault();
+    $('addErr').textContent = '';
+    const name = $('hName').value.trim();
+    const unit = $('hUnit').value.trim() || 'times';
+    const xp = parseFloat($('hXp').value);
+    const def = parseFloat($('hDef').value);
+    if (!name) { $('addErr').textContent = 'Give the habit a name.'; return; }
+    if (!(xp > 0) || xp > 1000) { $('addErr').textContent = 'XP per unit should be between 0.1 and 1000.'; return; }
+    const h = { id: 'c-' + uid(), name, stat: $('hStat').value, unit, xp, def: def > 0 ? def : 1 };
+    state.habits.push(h);
+    save();
+    fillHabitSelect();
+    $('habitSel').value = h.id;
+    onHabitChange();
+    renderAll();
+    $('hName').value = ''; $('hUnit').value = '';
+    toast('New habit: ' + name + ' raises ' + STAT[h.stat].name);
+  });
+
+  $('resetArea').addEventListener('click', ev => {
+    const id = ev.target.id;
+    if (id === 'resetBtn') {
+      $('resetArea').innerHTML = '<span class="confirm-row">Erase this hero and all progress? <button class="btn ghost warn" id="resetYes" type="button">Erase</button><button class="btn ghost" id="resetNo" type="button">Keep playing</button></span>';
+    } else if (id === 'resetNo') {
+      $('resetArea').innerHTML = '<button class="btn ghost warn" id="resetBtn" type="button">Start over</button>';
+    } else if (id === 'resetYes') {
+      const name = state.hero.name;
+      state = newState(name);
+      save(); fillHabitSelect(); onHabitChange(); renderAll();
+      $('resetArea').innerHTML = '<button class="btn ghost warn" id="resetBtn" type="button">Start over</button>';
+      toast(name + ' begins again at Lv 1');
+    }
+  });
+
+  // Roll quests and the date over at midnight if the page stays open.
+  let lastDay = today();
+  setInterval(() => {
+    if (!state || today() === lastDay) return;
+    lastDay = today();
+    $('when').max = lastDay; $('when').value = lastDay;
+    renderAll(); updatePreview();
+  }, 60000);
+
+  boot();
+})();
+</script>
