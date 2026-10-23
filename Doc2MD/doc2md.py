@@ -8,19 +8,25 @@ Usage:
 Each input file produces one .md file. PDFs are rebuilt from the text layer:
 font sizes become headings, lines are joined into paragraphs, hyphenation is
 undone, running headers/footers and page numbers are dropped, and tables are
-rendered as Markdown tables. EPUBs are read in spine (reading) order and their
+rendered as Markdown tables. Scanned pages (an image with no text layer) are
+OCR'd with Tesseract first. EPUBs are read in spine (reading) order and their
 XHTML is converted chapter by chapter.
 """
 
 from __future__ import annotations
 
 import argparse
+import os
 import posixpath
 import re
+import shutil
 import statistics
+import subprocess
 import sys
+import tempfile
 import zipfile
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
 from urllib.parse import unquote
@@ -30,6 +36,8 @@ SUPPORTED = {".pdf", ".epub"}
 BULLET_RE = re.compile(r"^[•▪●◦‣⁃∙·■□*]\s*")
 ORDERED_RE = re.compile(r"^(\(?\d{1,3}[.)]|\(?[a-zA-Z][.)])\s+")
 CID_RE = re.compile(r"\(cid:\d+\)")
+# How Tesseract tends to read a bullet glyph: "e", "o", "\u00ab", "e_"...
+OCR_BULLET_RE = re.compile(r"^[eo\u00b0\u00ab\u00bb*+\u00a2\u00a9\u00ae\u2022][_.,:;'`-]?$")
 PAGE_NUM_RE = re.compile(r"^(page\s+)?\d{1,4}(\s*(/|of)\s*\d{1,4})?$|^[ivxlcdm]{1,7}$", re.I)
 
 
@@ -69,6 +77,7 @@ class PageData:
     # (sort key, markdown) blocks such as tables, merged with text by position
     blocks: list[tuple[tuple[int, float], str]] = field(default_factory=list)
     gutter: float | None = None  # x of the column gap on two-column pages
+    ocr: bool = False  # text came from OCR rather than the PDF's text layer
 
 
 def _words_to_lines(words: list[dict]) -> list[Line]:
@@ -183,16 +192,102 @@ def _in_bbox(word: dict, bbox: tuple) -> bool:
     return x0 <= cx <= x1 and top <= cy <= bottom
 
 
-def _read_pdf_pages(path: Path, tables: bool) -> tuple[list[PageData], dict]:
+def _looks_scanned(page, words: list[dict]) -> bool:
+    """A page is scanned if it has (almost) no text but is mostly image."""
+    if sum(len(w["text"]) for w in words) >= 25:
+        return False
+    area = float(page.width) * float(page.height)
+    covered = sum((im["x1"] - im["x0"]) * (im["bottom"] - im["top"]) for im in page.images)
+    return covered > area * 0.3
+
+
+def _ocr_page(png: Path, lang: str, scale: float) -> list[dict]:
+    """OCR one page image with Tesseract, returning pdfplumber-style words."""
+    # Pages run in parallel, so stop each Tesseract from starting its own
+    # OpenMP thread pool; oversubscribed, it slows down by orders of magnitude.
+    env = {**os.environ, "OMP_THREAD_LIMIT": "1"}
+    proc = subprocess.run(["tesseract", str(png), "stdout", "-l", lang, "hocr"],
+                          capture_output=True, check=True, env=env)
+    root = ET.fromstring(proc.stdout)
+
+    def props(el) -> dict[str, list[str]]:
+        parts = (p.split() for p in el.get("title", "").split(";"))
+        return {p[0]: p[1:] for p in parts if p}
+
+    words = []
+    for line in root.iter():
+        if line.get("class") not in ("ocr_line", "ocr_header", "ocr_caption", "ocr_textfloat"):
+            continue
+        lp = props(line)
+        lx0, ltop, lx1, lbottom = (int(v) for v in lp["bbox"])
+        # x_size is Tesseract's estimate of the line's font size in pixels;
+        # unlike the bbox height it does not depend on descenders.
+        size = float(lp.get("x_size", [lbottom - ltop])[0]) * scale
+        first = True
+        for w in line.iter():
+            if w.get("class") != "ocrx_word":
+                continue
+            text = "".join(w.itertext()).strip()
+            if not text:
+                continue
+            if first and OCR_BULLET_RE.match(text):
+                text = "\u2022"
+            first = False
+            x0, _, x1, _ = (int(v) for v in props(w)["bbox"])
+            words.append({
+                "text": text, "x0": x0 * scale, "x1": x1 * scale,
+                # Use the line box so all words on a line share one top/bottom.
+                "top": ltop * scale, "bottom": lbottom * scale,
+                "size": round(size * 2) / 2, "fontname": "",
+            })
+    return words
+
+
+def _ocr_pages(path: Path, indexes: list[int], lang: str, dpi: int = 300) -> dict[int, list[dict]]:
+    if not shutil.which("tesseract"):
+        raise RuntimeError("scanned pages need OCR but Tesseract is not installed "
+                           "(e.g. apt install tesseract-ocr / brew install tesseract)")
+    import pypdfium2 as pdfium
+
+    print(f"  OCR: {len(indexes)} scanned page(s) in {path.name}...", file=sys.stderr)
+    with tempfile.TemporaryDirectory() as tmp:
+        pngs = {}
+        pdf = pdfium.PdfDocument(str(path))
+        try:
+            # Rendering is not thread-safe; do it serially, then OCR in parallel.
+            for i in indexes:
+                png = Path(tmp) / f"page{i}.png"
+                pdf[i].render(scale=dpi / 72).to_pil().convert("L").save(png, dpi=(dpi, dpi))
+                pngs[i] = png
+        finally:
+            pdf.close()
+        with ThreadPoolExecutor(max_workers=os.cpu_count() or 2) as pool:
+            futures = {i: pool.submit(_ocr_page, png, lang, 72 / dpi) for i, png in pngs.items()}
+            try:
+                return {i: f.result() for i, f in futures.items()}
+            except subprocess.CalledProcessError as e:
+                msg = e.stderr.decode(errors="replace").strip().splitlines()
+                raise RuntimeError(f"tesseract failed: {' / '.join(msg[-3:])}") from None
+
+
+def _read_pdf_pages(path: Path, tables: bool, ocr: str = "auto",
+                    ocr_lang: str = "eng") -> tuple[list[PageData], dict]:
     import pdfplumber
 
     pages = []
+    scanned: list[int] = []
     with pdfplumber.open(path) as pdf:
         meta = pdf.metadata or {}
-        for page in pdf.pages:
+        for i, page in enumerate(pdf.pages):
             data = PageData(width=float(page.width), height=float(page.height))
             words = page.extract_words(extra_attrs=["size", "fontname"],
                                        keep_blank_chars=False, use_text_flow=False)
+            if ocr == "always" or (ocr == "auto" and _looks_scanned(page, words)):
+                data.ocr = True
+                scanned.append(i)
+                pages.append(data)
+                page.flush_cache()
+                continue
             data.gutter = _find_gutter(words, data.width)
             if tables:
                 try:
@@ -210,7 +305,31 @@ def _read_pdf_pages(path: Path, tables: bool) -> tuple[list[PageData], dict]:
             data.lines = _column_lines(words, data.gutter)
             pages.append(data)
             page.flush_cache()
+
+    if scanned:
+        for i, words in _ocr_pages(path, scanned, ocr_lang).items():
+            pages[i].gutter = _find_gutter(words, pages[i].width)
+            pages[i].lines = _column_lines(words, pages[i].gutter)
     return pages, meta
+
+
+def _normalize_ocr_sizes(pages: list[PageData], body: float) -> None:
+    """Put OCR size estimates on the same scale as real font sizes.
+
+    Tesseract's sizes are consistently off by some factor and jitter from line
+    to line, so scale them so OCR body text matches the document body size,
+    then snap anything near body size to exactly body size.
+    """
+    ocr_lines = [ln for p in pages if p.ocr for ln in p.lines]
+    weights: Counter[float] = Counter()
+    for ln in ocr_lines:
+        weights[ln.size] += len(ln.text)
+    if not weights:
+        return
+    ocr_body = weights.most_common(1)[0][0] or body
+    for ln in ocr_lines:
+        size = ln.size * body / ocr_body
+        ln.size = body if abs(size - body) < body * 0.12 else round(size * 2) / 2
 
 
 def _norm_repeat(text: str) -> str:
@@ -255,10 +374,15 @@ def _heading_levels(pages: list[PageData], body: float) -> dict[float, int]:
         for ln in p.lines:
             if ln.size >= body * 1.15 and len(ln.text) < 150:
                 sizes[ln.size] += 1
-    # Ignore one-off giant sizes only if there are many heading sizes; keep
-    # the largest few as H1..H3 and lump the rest into H4.
-    ordered = sorted(sizes, reverse=True)
-    return {s: min(i + 1, 4) for i, s in enumerate(ordered)}
+    # Sizes within 10% of each other share a level (OCR sizes are estimates);
+    # the largest group is H1, then H2, H3, and everything smaller is H4.
+    levels: dict[float, int] = {}
+    level, group_top = 0, None
+    for size in sorted(sizes, reverse=True):
+        if group_top is None or size < group_top * 0.9:
+            level, group_top = level + 1, size
+        levels[size] = min(level, 4)
+    return levels
 
 
 def _join(prev: str, nxt: str) -> str:
@@ -370,12 +494,18 @@ def _merge_across_pages(chunks: list[str]) -> list[str]:
     return out
 
 
-def pdf_to_markdown(path: Path, tables: bool = True, page_markers: bool = False) -> str:
-    pages, meta = _read_pdf_pages(path, tables)
+def pdf_to_markdown(path: Path, tables: bool = True, page_markers: bool = False,
+                    ocr: str = "auto", ocr_lang: str = "eng") -> str:
+    """ocr: "auto" OCRs pages that look scanned, "always" OCRs every page
+    (for PDFs with a garbage text layer), "never" disables OCR."""
+    pages, meta = _read_pdf_pages(path, tables, ocr, ocr_lang)
     if not any(p.lines or p.blocks for p in pages):
-        raise ValueError("no extractable text (scanned PDF? run OCR first, e.g. ocrmypdf)")
+        hint = " (scanned PDF? try --ocr always)" if ocr == "never" else ""
+        raise ValueError("no extractable text" + hint)
     _strip_headers_footers(pages)
-    body = _body_size(pages)
+    # Base the body size on real text when there is any; OCR sizes follow it.
+    body = _body_size([p for p in pages if not p.ocr] or pages)
+    _normalize_ocr_sizes(pages, body)
     levels = _heading_levels(pages, body)
 
     chunks: list[str] = []
@@ -515,7 +645,8 @@ def collect(inputs: list[str], recursive: bool) -> list[Path]:
 
 def convert(path: Path, args) -> str:
     if path.suffix.lower() == ".pdf":
-        return pdf_to_markdown(path, tables=not args.no_tables, page_markers=args.page_markers)
+        return pdf_to_markdown(path, tables=not args.no_tables, page_markers=args.page_markers,
+                               ocr=args.ocr, ocr_lang=args.ocr_lang)
     return epub_to_markdown(path, images=not args.no_images)
 
 
@@ -528,6 +659,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--stdout", action="store_true", help="print Markdown instead of writing files")
     ap.add_argument("--page-markers", action="store_true", help="PDF: insert <!-- page N --> comments")
     ap.add_argument("--no-tables", action="store_true", help="PDF: skip table detection (faster)")
+    ap.add_argument("--ocr", choices=["auto", "always", "never"], default="auto",
+                    help="PDF: OCR scanned pages (auto, default), every page (always), or none")
+    ap.add_argument("--ocr-lang", default="eng",
+                    help="PDF: Tesseract language(s), e.g. eng, deu, eng+fra (default: eng)")
     ap.add_argument("--no-images", action="store_true", help="EPUB: drop image alt-text placeholders")
     args = ap.parse_args(argv)
 

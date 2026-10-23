@@ -1,5 +1,7 @@
 """Run with: python -m unittest discover -s tests  (PDF tests need reportlab)."""
 
+import io
+import shutil
 import sys
 import tempfile
 import unittest
@@ -123,6 +125,59 @@ class PdfTests(unittest.TestCase):
         positions = [md.index(f"# Section {n}\n") for n in range(1, 7)]
         self.assertEqual(positions, sorted(positions))
         self.assertIn("Text 1. Words flow down the left column first. Words", md)
+
+
+@unittest.skipUnless(HAVE_REPORTLAB, "reportlab not installed")
+class OcrTests(unittest.TestCase):
+    """Scanned PDFs: rasterize a text PDF into an image-only one, then convert."""
+
+    def make_scanned(self, d: Path) -> Path:
+        import pypdfium2 as pdfium
+        from reportlab.lib.utils import ImageReader
+        from reportlab.pdfgen import canvas
+
+        ss = getSampleStyleSheet()
+        text_pdf = d / "text.pdf"
+        story = [Paragraph("Chapter One", ss["Heading1"]), Paragraph(BODY, ss["BodyText"]),
+                 Paragraph("A Section", ss["Heading2"]), Paragraph(BODY, ss["BodyText"]),
+                 ListFlowable([ListItem(Paragraph("First item", ss["BodyText"])),
+                               ListItem(Paragraph("Second item", ss["BodyText"]))],
+                              bulletType="bullet")]
+        SimpleDocTemplate(str(text_pdf), pagesize=letter).build(story)
+
+        scanned = d / "scanned.pdf"
+        c = canvas.Canvas(str(scanned), pagesize=letter)
+        src = pdfium.PdfDocument(str(text_pdf))
+        for page in src:
+            buf = io.BytesIO()
+            page.render(scale=200 / 72).to_pil().convert("L").save(buf, "PNG")
+            c.drawImage(ImageReader(buf), 0, 0, *letter)
+            c.showPage()
+        src.close()
+        c.save()
+        return scanned
+
+    def test_detects_scanned_pdf_without_ocr(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = self.make_scanned(Path(d))
+            with self.assertRaisesRegex(ValueError, "--ocr always"):
+                doc2md.pdf_to_markdown(path, ocr="never")
+
+    @unittest.skipUnless(shutil.which("tesseract"), "tesseract not installed")
+    def test_ocr(self):
+        with tempfile.TemporaryDirectory() as d:
+            md = doc2md.pdf_to_markdown(self.make_scanned(Path(d)))
+        self.assertIn("# Chapter One\n", md)
+        self.assertIn("## A Section\n", md)
+        self.assertIn("- First item\n\n- Second item", md)
+        self.assertIn("so the converter has to join them back into one paragraph", md)
+
+    def test_text_pdf_is_not_ocrd(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "t.pdf"
+            SimpleDocTemplate(str(path)).build([Paragraph(BODY, getSampleStyleSheet()["BodyText"])])
+            pages, _ = doc2md._read_pdf_pages(path, tables=False)
+        self.assertFalse(any(p.ocr for p in pages))
 
 
 class HelperTests(unittest.TestCase):

@@ -12,6 +12,14 @@ Requires Python 3.9+.
 pip install -r requirements.txt
 ```
 
+To convert scanned PDFs, also install [Tesseract](https://github.com/tesseract-ocr/tesseract):
+
+```sh
+sudo apt install tesseract-ocr        # Debian/Ubuntu
+brew install tesseract                # macOS
+# other languages: apt install tesseract-ocr-deu, or brew install tesseract-lang
+```
+
 ## Usage
 
 ```sh
@@ -28,6 +36,8 @@ python doc2md.py paper.pdf --stdout | less     # print instead of writing a file
 | `--stdout` | Print the Markdown instead of writing files |
 | `--page-markers` | PDF: insert `<!-- page N -->` comments at page breaks |
 | `--no-tables` | PDF: skip table detection (faster on long documents) |
+| `--ocr auto\|always\|never` | PDF: OCR scanned pages (`auto`, the default), every page, or none |
+| `--ocr-lang LANG` | PDF: Tesseract language(s), e.g. `deu` or `eng+fra` (default `eng`) |
 | `--no-images` | EPUB: drop `[Image: alt text]` placeholders |
 
 If `book.pdf` and `book.epub` are converted in the same run, the second one
@@ -50,11 +60,26 @@ title and author go at the top, and chapters are separated by `---`.
 - bullet and numbered lists become Markdown lists
 - ruled tables become Markdown tables
 - two-column layouts are read left column first, then right
+- scanned pages are detected and OCR'd automatically (see below)
+
+### Scanned PDFs
+
+A page counts as scanned when it has almost no text but is mostly covered by
+an image. Those pages, and only those, are rendered at 300 DPI and run through
+Tesseract in parallel. The recognized words then go through the same pipeline
+as real text, so headings, paragraphs, lists, columns and running headers are
+handled the same way. A PDF that mixes text pages and scanned pages keeps the
+real text layer for the text pages.
+
+Use `--ocr always` for PDFs whose text layer is garbage (for example a bad
+earlier OCR pass), and `--ocr never` to skip OCR entirely.
 
 ## Limitations
 
-- **Scanned PDFs** have no text layer. Run OCR first (for example
-  `ocrmypdf in.pdf out.pdf`) and then convert the result.
+- **OCR quality** depends on the scan. Low-resolution, skewed or rotated
+  pages produce more errors. Tables on scanned pages come out as plain
+  text, and heading levels are estimated from text size, so they can be off
+  by one, especially in PDFs that mix scanned and text pages.
 - **PDF structure is inferred** from fonts and positions, so unusual layouts
   can produce odd headings or paragraph breaks. Math, footnotes and
   sidebars come through as plain text.
@@ -63,6 +88,6 @@ title and author go at the top, and chapters are separated by `---`.
 ## Tests
 
 ```sh
-pip install reportlab   # used to generate test PDFs
+pip install reportlab   # used to generate test PDFs; OCR tests also need tesseract
 python -m unittest discover -s tests
 ```
